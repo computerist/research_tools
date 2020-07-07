@@ -6,6 +6,7 @@ import (
   "flag"
   "fmt"
   "io/ioutil"
+  "time"
 )
 
 func check(e error) {
@@ -85,9 +86,13 @@ func main() {
     var candidates = issuersMap[searchCert.Issuer.String()]
     signer = findCertSigner(candidates, searchCert)
     if nil != signer {
-      fmt.Println("Issuer found in the issuers cert list.");
-      fmt.Println("search cert: ", searchCert.Subject);
-      fmt.Println("Signer cert: ", signer.Subject);
+      if searchCert.NotAfter.After(time.Now()) {
+        fmt.Println("Issuer found in the issuers cert list.")
+        fmt.Println("search cert: ", searchCert.Subject)
+        fmt.Println("(not after) ", searchCert.NotAfter)
+
+        fmt.Println("Signer cert: ", signer.Subject)
+      }
     }
   }
 }
